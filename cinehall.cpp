@@ -79,7 +79,7 @@ class Hall{
         vector<int> v= {less_price_cat_seats,high_price_cat_seats,vip_seats};
         return v;
     }
-    void manual_booking(vector<Seat>book_seats, int mode){
+    void manual_booking(User u,vector<Seat>book_seats, int mode){
         // mode 0 for low price, mode 1 for regular mode , mode 2 for VIP mode
         vector<int>v=this->seats_available();
         int n_req=book_seats.size(); // number of seats requested to be booked
@@ -95,12 +95,10 @@ class Hall{
                 
                 for (Seat s: book_seats){
                     if (s.is_low==false){
-                        valid=false;
                         cout<<"Wrong seat was chosen! Choose the correct seat from 0th row only!";
                         return;
                     }
                     if (s.is_booked==true){
-                        valid=false;
                         cout<<"Seat is already booked! Try another seat!";
                         return;
                     }                  
@@ -116,7 +114,6 @@ class Hall{
             else{
                 for (Seat s: book_seats){
                     if (s.is_booked==true){
-                        valid=false;
                         cout<<"Seat is already booked! Try another seat!";
                         return;
                     }                  
@@ -126,7 +123,6 @@ class Hall{
         else{
             if (n_req>v[2]){
                 cout<<"All seats are booked in this category. Try other categories or other shows!";
-                valid=false;
                 return;
             }
             else{
@@ -136,21 +132,53 @@ class Hall{
                         return;
                     }
                     if (s.is_booked==true){
-                        valid=false;
                         cout<<"Seat is already booked! Try another seat!";
                         return;
                     }                  
                 }
             }
         }
-        if (valid){
+        double price= Price_calc(book_seats,mode);
+        cout<<"The total price is:"<<price<<endl;
+        bool paid=false;
+        double amt;
+        char ch='Y';
+        while (ch=='Y' or ch=='y'){
+            cout<<"Enter the amount to pay:";
+            cin>>amt;
+            if (amt==price){
+                paid=true;
+                break;
+            }
+            else{
+                cout<<"Incorrect amount. Do you want to try again? (Y/N)";
+                cin>>ch;                
+            }
+
+        }
+        if (mode==0 or mode==1){
+            if (paid){
+                booking_number++;
                 for (Seat s:book_seats){
                     s.is_booked=true;
                 }
+            }
         }
+        else{
+            if (paid){
+                booking_number++;
+                for(Seat s: book_seats){
+                    int r= s.row_num;
+                    int c=s.col_num;
+                }
+            }
+        }
+        
+        
+        
     }
 
-    void auto_booking(int num_seats, int mode){
+    void auto_booking(User u, int num_seats, int mode){
         vector<int>v=this->seats_available();
         if (num_seats>v[mode]){
             cout<<"Invalid Request!";
