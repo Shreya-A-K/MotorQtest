@@ -42,6 +42,7 @@ class Hall{
     double scale_down_factor_max=1; // Low demand time price scale factor
     double base_price_reg=200;
     double base_price_low=50;
+    double fixed_privelege_charge=200;
 
 
 
@@ -91,8 +92,53 @@ class Hall{
         vector<int> v= {less_price_cat_seats,high_price_cat_seats,vip_seats};
         return v;
     }
-    double Price_calc(int num_seats,int mode){
-        //pass
+    double Price_calc(vector<Seat> booked_seats,int mode){
+        double price;
+        int num_booked_seats=1;
+        if (mode==0){
+            price=booked_seats.size()*base_price_low;
+            return price;
+        }
+        else if (mode==1){
+            price=booked_seats.size()*base_price_reg;
+            return price;
+        }
+        
+        else{
+            
+            for(Seat s: booked_seats){
+                int r= s.row_num;
+                int c=s.col_num;
+                num_booked_seats++;
+                if (r-1>=0){
+                    num_booked_seats++;
+                    if (c-1>=0){
+                        num_booked_seats++;
+                    }
+                    if (c+1<col){
+                        num_booked_seats++;
+                    }
+                }
+                if (r+1<row){
+                    num_booked_seats++;
+                    if (c-1>=0){
+                        num_booked_seats++;
+                    }
+                    if (c+1<col){
+                        num_booked_seats++;
+                    }
+                }
+                if (c-1>=0){
+                    num_booked_seats++;
+                }
+                if (c+1<col){
+                    num_booked_seats++;
+                }
+            
+            }
+        }
+        price=base_price_reg*num_booked_seats+fixed_privelege_charge;
+        
         return 0;
     }
 
@@ -155,7 +201,7 @@ class Hall{
                 }
             }
         }
-        double price= Price_calc(book_seats.size(),mode);
+        double price= Price_calc(book_seats,mode);
         cout<<"The total price is:"<<price<<endl;
         bool paid=false;
         double amt;
