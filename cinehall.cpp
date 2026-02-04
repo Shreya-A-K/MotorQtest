@@ -142,7 +142,13 @@ class Hall{
         return 0;
     }
 
-    void manual_booking(User u,vector<Seat>book_seats, int mode){
+    void manual_booking(User u,vector<vector<int>>selected_seats, int mode){
+        vector<Seat>book_seats={};
+        for (vector<int>v:selected_seats){
+            book_seats.push_back(hall_seating[v[0]][v[1]]);
+        }
+
+
         // mode 0 for low price, mode 1 for regular mode , mode 2 for VIP mode
         vector<int>v=this->seats_available();
         int n_req=book_seats.size(); // number of seats requested to be booked
@@ -313,18 +319,44 @@ class User{
     public:
     string username;
     vector<int> Booking_history={};
+    User(string username, string password){
+        this->username=username;
+        this->password=password;
+    }
+    void make_booking(Hall h, int mode){
+        vector< vector<int> > seat_nums={};
+        bool ch='Y';
+        while (ch=='Y'){
+            int r,c;
+            cout<<"Enter the row number:";
+            cin>>r;
+            cout<<"Enter the col number:";
+            cin>>c;
+            seat_nums.push_back({r,c});
+        }
+        h.manual_booking(*this,seat_nums, mode);
+
+    }
+
+
 
 
 };
 
 int main(){
     Hall* h1= new Hall(1,5,5);
+    User* u = new User("Shreya", "abc");
     h1->view_hall();
     vector<int> v= h1->seats_available();
     for (int i=0; i<v.size();i++){
         cout<<v[i]<<" ";
     }
     cout<< "\n";
+
+    
+    u->make_booking(*h1,1);
+    
+
 
     return 0;
 }
