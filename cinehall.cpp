@@ -21,6 +21,7 @@ class Seat{
         
     }
 
+
     void print(){
         cout<< "[ "<< (int) is_booked <<" ]";
     }
@@ -162,6 +163,8 @@ class Hall{
                 for (Seat s:book_seats){
                     s.is_booked=true;
                 }
+                cout<<"Booking done successfully!"<<endl;
+                cout<<"Your Booking number is: "<<booking_number<<endl;
             }
         }
         else{
@@ -170,8 +173,38 @@ class Hall{
                 for(Seat s: book_seats){
                     int r= s.row_num;
                     int c=s.col_num;
+                    hall_seating[r][c].is_booked=true;
+                    if (r-1>=0){
+                        hall_seating[r-1][c].is_booked=true;
+                        if (c-1>=0){
+                            hall_seating[r-1][c-1].is_booked=true;
+                        }
+                        if (c+1<col){
+                            hall_seating[r-1][c+1].is_booked=true;
+                        }
+                    }
+                    if (r+1<row){
+                        hall_seating[r+1][c].is_booked=true;
+                        if (c-1>=0){
+                            hall_seating[r+1][c-1].is_booked=true;
+                        }
+                        if (c+1<col){
+                            hall_seating[r+1][c+1].is_booked=true;
+                        }
+                    }
+                    if (c-1>=0){
+                        hall_seating[r][c-1].is_booked=true;
+                    }
+                    if (c+1<col){
+                        hall_seating[r][c+1].is_booked=true;
+                    }
+                    
+                    
                 }
+                cout<<"Booking done successfully!"<<endl;
+                cout<<"Your Booking number is: "<<booking_number<<endl;
             }
+
         }
         
         
