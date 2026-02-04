@@ -3,6 +3,9 @@
 #include <string>
 #include <unordered_map>
 using namespace std;
+
+
+
 class Seat{
     public:
     int row_num;
@@ -94,7 +97,7 @@ class Hall{
     }
     double Price_calc(vector<Seat> booked_seats,int mode){
         double price;
-        int num_booked_seats=1;
+        int num_booked_seats=0;
         if (mode==0){
             price=booked_seats.size()*base_price_low;
             return price;
@@ -110,7 +113,7 @@ class Hall{
                 int r= s.row_num;
                 int c=s.col_num;
                 num_booked_seats++;
-                if (r-1>=0){
+                if ((r-1)>=0){
                     num_booked_seats++;
                     if (c-1>=0){
                         num_booked_seats++;
@@ -119,19 +122,19 @@ class Hall{
                         num_booked_seats++;
                     }
                 }
-                if (r+1<row){
+                if ((r+1)<row){
                     num_booked_seats++;
-                    if (c-1>=0){
+                    if ((c-1)>=0){
                         num_booked_seats++;
                     }
-                    if (c+1<col){
+                    if ((c+1)<col){
                         num_booked_seats++;
                     }
                 }
-                if (c-1>=0){
+                if ((c-1)>=0){
                     num_booked_seats++;
                 }
-                if (c+1<col){
+                if ((c+1)<col){
                     num_booked_seats++;
                 }
             
@@ -139,10 +142,10 @@ class Hall{
         }
         price=base_price_reg*num_booked_seats+fixed_privelege_charge;
         
-        return 0;
+        return price;
     }
 
-    void manual_booking(User u,vector<vector<int>>selected_seats, int mode){
+    void manual_booking(vector<vector<int>>selected_seats, int mode){
         vector<Seat>book_seats={};
         for (vector<int>v:selected_seats){
             book_seats.push_back(hall_seating[v[0]][v[1]]);
@@ -279,7 +282,7 @@ class Hall{
         
     }
 
-    void auto_booking(User u, int num_seats, int mode){
+    void auto_booking(int num_seats, int mode){
         vector<int>v=this->seats_available();
         if (num_seats>v[mode]){
             cout<<"Invalid Request!";
@@ -312,8 +315,6 @@ class Hall{
 
 };
 
-
-
 class User{
     string password;
     public:
@@ -323,18 +324,9 @@ class User{
         this->username=username;
         this->password=password;
     }
-    void make_booking(Hall h, int mode){
-        vector< vector<int> > seat_nums={};
-        bool ch='Y';
-        while (ch=='Y'){
-            int r,c;
-            cout<<"Enter the row number:";
-            cin>>r;
-            cout<<"Enter the col number:";
-            cin>>c;
-            seat_nums.push_back({r,c});
-        }
-        h.manual_booking(*this,seat_nums, mode);
+    void make_booking(Hall h,vector<vector<int>> seat_nums, int mode){
+        
+        h.manual_booking(seat_nums, mode);
 
     }
 
@@ -343,18 +335,66 @@ class User{
 
 };
 
+
+
 int main(){
-    Hall* h1= new Hall(1,5,5);
+    Hall* h1= new Hall(1,7,7);
     User* u = new User("Shreya", "abc");
     h1->view_hall();
-    vector<int> v= h1->seats_available();
-    for (int i=0; i<v.size();i++){
-        cout<<v[i]<<" ";
+    // vector<int> v= h1->seats_available();
+    // for (int i=0; i<v.size();i++){
+    //     cout<<v[i]<<" ";
+    // }
+    // cout<< "\n";
+    vector< vector<int> > seat_nums={};
+    cout<<"Let's book under mode 0:\n";
+    char ch='Y';
+    while (ch=='Y' or ch=='y'){
+            int r,c;
+            cout<<"Enter the row number:";
+            cin>>r;
+            cout<<"Enter the col number:";
+            cin>>c;
+            seat_nums.push_back({r,c});
+            cout<<"Do you want to enter more seats(Y/N): ";
+            cin>>ch;
     }
-    cout<< "\n";
+   
+    (*u).make_booking(*h1,seat_nums,0);
 
-    
-    u->make_booking(*h1,1);
+
+    seat_nums={};
+    cout<<"Let's book under mode 1:\n";
+    ch='Y';
+    while (ch=='Y' or ch=='y'){
+            int r,c;
+            cout<<"Enter the row number:";
+            cin>>r;
+            cout<<"Enter the col number:";
+            cin>>c;
+            seat_nums.push_back({r,c});
+            cout<<"Do you want to enter more seats(Y/N): ";
+            cin>>ch;
+    }
+    (*u).make_booking(*h1,seat_nums,1);
+
+    seat_nums={};
+    cout<<"Let's book under mode 2:\n";
+    ch='Y';
+    while (ch=='Y' or ch=='y'){
+            int r,c;
+            cout<<"Enter the row number:";
+            cin>>r;
+            cout<<"Enter the col number:";
+            cin>>c;
+            seat_nums.push_back({r,c});
+            cout<<"Do you want to enter more seats(Y/N): ";
+            cin>>ch;
+    }
+    (*u).make_booking(*h1,seat_nums,2);
+
+
+
     
 
 
