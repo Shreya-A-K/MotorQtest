@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <unordered_map>
 using namespace std;
 class Seat{
     public:
@@ -27,15 +28,25 @@ class Seat{
     }
 };
 static int booking_number=0;
+
 class Hall{
     public:
     string owner;
+    int hall_no;
     int row; // 0->closest seat to screen 
     int col;
     vector<vector<Seat>> hall_seating={};
-    int category ; // 0-> lower pricing , 1-> higher pricing , 2->VIP
+    double scale_up_factor_min=1; // slight increase of price scale factor
+    double scale_up_factor_max=1; // Peak time price scale factor
+    double scale_down_factor_min=1; // slight decrease of price scale factor
+    double scale_down_factor_max=1; // Low demand time price scale factor
+    double base_price_reg=200;
+    double base_price_low=50;
 
-    Hall(int row, int col){
+
+
+    Hall(int hall_no,int row, int col){
+        this->hall_no=hall_no;
         this->row=row;
         this->col=col;
         for (int i=0;i<row;i++){
@@ -80,6 +91,11 @@ class Hall{
         vector<int> v= {less_price_cat_seats,high_price_cat_seats,vip_seats};
         return v;
     }
+    double Price_calc(int num_seats,int mode){
+        //pass
+        return 0;
+    }
+
     void manual_booking(User u,vector<Seat>book_seats, int mode){
         // mode 0 for low price, mode 1 for regular mode , mode 2 for VIP mode
         vector<int>v=this->seats_available();
@@ -139,7 +155,7 @@ class Hall{
                 }
             }
         }
-        double price= Price_calc(book_seats,mode);
+        double price= Price_calc(book_seats.size(),mode);
         cout<<"The total price is:"<<price<<endl;
         bool paid=false;
         double amt;
@@ -217,30 +233,11 @@ class Hall{
             cout<<"Invalid Request!";
             return;
         }
+        for (vector<Seat> row: hall_seating){
+            
+        }
 
     }
-
-
-    
-
-};
-class HallOwner{
-    private:
-    string password;
-    double wallet=0;
-    public:
-    string name;
-    double scale_up_factor_min=1; // slight increase of price scale factor
-    double scale_up_factor_max=1; // Peak time price scale factor
-    double scale_down_factor_min=1; // slight decrease of price scale factor
-    double scale_down_factor_max=1; // Low demand time price scale factor
-
-
-    HallOwner(string name, string password){
-        this->name=name;
-        this->password=password;
-    }
-    
     void set_min_scale_up(double factor){
         scale_up_factor_min=factor;
     }
@@ -255,8 +252,14 @@ class HallOwner{
     void set_max_scale_down(double factor){
         scale_down_factor_max=factor;
     }
+    void set_base_price(double base_price_low, double base_price_reg){
+        this->base_price_low=base_price_low;
+        this->base_price_reg=base_price_reg;
+
+    }    
 
 };
+
 
 
 class User{
@@ -269,7 +272,7 @@ class User{
 };
 
 int main(){
-    Hall* h1= new Hall(5,5);
+    Hall* h1= new Hall(1,5,5);
     h1->view_hall();
     vector<int> v= h1->seats_available();
     for (int i=0; i<v.size();i++){
